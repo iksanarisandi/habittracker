@@ -38,7 +38,7 @@ captures/
 .idea/
 *.iws
 *.ipr
-*.xml
+# *.xml # Too aggressive, ignores Android resources
 !/app/src/main/res/xml/*.xml
 
 # Keystore files
