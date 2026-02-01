@@ -1,0 +1,724 @@
+PRODUCT REQUIREMENTS DOCUMENT
+Pelacak Kebiasaan Harian - MVP
+Version	Date	Status
+2.0 - Production Ready	February 2026	Final for Development
+
+1. Executive Summary
+Pelacak Kebiasaan Harian adalah aplikasi Android minimalis yang membantu pengguna membangun kebiasaan positif melalui tracking konsisten, visualisasi progres, dan reminder pintar. Aplikasi ini dirancang sebagai MVP (Minimum Viable Product) yang siap produksi dengan fokus pada kesederhanaan, kecepatan, dan pengalaman offline-first.
+
+1.1 Problem Statement
+Banyak pengguna kesulitan membangun kebiasaan baru karena:
+•	Aplikasi habit tracker terlalu kompleks (terlalu banyak fitur yang tidak terpakai)
+•	Membutuhkan login dan koneksi internet (friction tinggi)
+•	Tracking manual memakan waktu dan mudah terlupakan
+•	Tidak ada visual progres yang memotivasi
+
+1.2 Solution Overview
+Aplikasi ini memberikan solusi dengan:
+•	Interface minimalis dengan fokus pada daily checklist
+•	100% offline, tanpa akun atau registrasi
+•	Streak tracking untuk motivasi berkelanjutan
+•	Reminder pintar yang tidak mengganggu
+•	Widget home screen untuk akses instant
+
+1.3 Success Metrics
+MVP dianggap berhasil jika mencapai:
+•	Daily Active Users (DAU) retention rate > 40% setelah 7 hari
+•	Average session duration 30-60 detik (cepat, efisien)
+•	User membuat minimal 3 habit dalam minggu pertama
+•	Crash rate < 1% pada production
+•	App rating > 4.2 di Play Store setelah 100+ reviews
+
+2. Target Users & User Personas
+2.1 Primary Target Users
+•	Usia: 18-35 tahun
+•	Profesi: Mahasiswa, fresh graduate, early professionals
+•	Tech-savvy: Familiar dengan smartphone
+•	Goal-oriented: Ingin self-improvement tapi butuh tools yang simpel
+•	Preferensi: Privacy-conscious, tidak suka aplikasi yang complicated
+
+2.2 User Personas
+Persona 1: Andi - Fresh Graduate (23 tahun)
+Motivasi: Ingin membangun rutinitas produktif setelah lulus kuliah
+Pain points: Aplikasi habit tracker lain terlalu ribet, males buat akun
+Needs: Simple checklist, visual progres, reminder pagi hari
+Tech level: Tinggi - pakai banyak productivity apps
+
+Persona 2: Sari - Mahasiswa (20 tahun)
+Motivasi: Ingin konsisten olahraga dan baca buku
+Pain points: Sering lupa, butuh reminder tapi bukan yang spam
+Needs: Widget di home screen, streak untuk motivasi
+Tech level: Medium - pakai smartphone untuk sosmed dan basic apps
+
+Persona 3: Budi - Young Professional (28 tahun)
+Motivasi: Work-life balance, tracking sleep dan exercise
+Pain points: Khawatir soal data privacy, pengen semua offline
+Needs: Clean UI, fast performance, tidak ada data collection
+Tech level: Tinggi - aware tentang privacy
+
+3. MVP Scope - Features In & Out
+3.1 Core Features (MUST HAVE - Phase 1)
+Feature 1: Habit Management
+Priority: P0 (Critical)
+User Story: Sebagai pengguna, saya ingin membuat, mengedit, dan menghapus kebiasaan agar saya bisa customize tracking sesuai kebutuhan saya.
+Acceptance Criteria:
+•	User bisa menambah habit baru dengan nama (wajib), ikon (opsional), dan frekuensi (daily/weekly)
+•	User bisa edit nama, ikon, dan reminder time untuk habit yang sudah ada
+•	User bisa hapus habit dengan confirmation dialog
+•	Maksimal 20 habits aktif per user (untuk menjaga performance)
+•	Validasi: nama habit tidak boleh kosong dan maksimal 50 karakter
+
+Feature 2: Daily Checklist
+Priority: P0 (Critical)
+User Story: Sebagai pengguna, saya ingin melihat semua habit hari ini dalam satu layar dan bisa check dengan tap cepat.
+Acceptance Criteria:
+•	Halaman utama menampilkan semua daily habits untuk hari ini
+•	Tap sekali pada habit = toggle completed/uncompleted
+•	Visual feedback saat tap (animasi check, haptic feedback)
+•	Status completed ditampilkan dengan checkmark dan warna accent
+•	Habit yang sudah completed bisa di-uncheck jika user salah tap
+•	Auto-reset setiap hari pada jam 00:00 waktu lokal device
+
+Feature 3: Streak Tracking
+Priority: P0 (Critical)
+User Story: Sebagai pengguna, saya ingin melihat streak saya agar termotivasi untuk konsisten.
+Acceptance Criteria:
+•	Streak dihitung sebagai jumlah hari berturut-turut habit completed
+•	Streak reset ke 0 jika user skip 1 hari penuh (tidak ada grace period di MVP)
+•	Streak ditampilkan di detail habit dengan icon flame/fire
+•	Current streak dan best streak (all-time highest) keduanya ditampilkan
+•	Weekly habits: streak dihitung sebagai jumlah minggu berturut-turut completed
+
+Feature 4: Basic Reminder
+Priority: P0 (Critical)
+User Story: Sebagai pengguna, saya ingin diingatkan untuk melakukan habit agar tidak lupa.
+Acceptance Criteria:
+•	User bisa set reminder time per habit (opsional)
+•	Notifikasi muncul tepat waktu sesuai setting
+•	Notifikasi hanya muncul jika habit belum completed hari itu
+•	Tap notifikasi membuka app langsung ke habit tersebut
+•	User bisa disable/enable reminder per habit
+•	Maksimal 1 reminder per habit per hari (tidak spam)
+
+3.2 Nice-to-Have Features (Phase 1.1 - Post-MVP)
+Features ini akan diimplementasikan setelah MVP stable:
+Feature 5: Weekly Progress Chart
+Priority: P1 (High)
+Simple bar chart showing completion rate untuk 7 hari terakhir per habit. Menggunakan library chart ringan (MPAndroidChart atau Vico).
+
+Feature 6: Home Screen Widget
+Priority: P1 (High)
+Widget 4x2 menampilkan 3-5 habit teratas dengan tap-to-check functionality. Menggunakan Jetpack Glance untuk Compose widget.
+
+3.3 Features Explicitly Out of Scope
+Features ini TIDAK akan ada di MVP dan mungkin di future versions:
+Feature	Reasoning
+Login / Account System	Menambah friction, butuh backend, bertentangan dengan offline-first philosophy
+Cloud Sync	Membutuhkan backend infrastructure, meningkatkan complexity significantly
+Social Features / Sharing	Tidak relevan untuk MVP yang fokus pada personal tracking
+Gamification (Badges, Levels, Points)	Bisa jadi distraction, MVP fokus pada simplicity
+Advanced Statistics (Monthly, Yearly)	Weekly progress sudah cukup untuk MVP, advanced analytics phase 2+
+AI Coaching / Suggestions	Membutuhkan ML model dan data collection yang kompleks
+Habit Categories / Tags	Menambah UI complexity tanpa value signifikan untuk MVP
+Export Data (CSV, PDF)	Nice-to-have tapi tidak critical untuk MVP
+
+4. Detailed User Flows
+4.1 First-Time User Flow (Onboarding)
+1.	App launch pertama kali → Splash screen (max 2 detik)
+2.	Onboarding screen 1: Welcome message + value proposition (swipeable)
+3.	Onboarding screen 2: Pilih 3-5 habit template dari preset list (opsional)
+4.	Onboarding screen 3: Permission request untuk notifikasi (dengan explanation)
+5.	Onboarding screen 4: Quick tutorial gesture (tap to check, swipe to edit - max 10 detik)
+6.	Direct ke Home screen dengan habits (dari template atau kosong)
+7.	FAB button untuk add first habit jika user skip template
+Design Notes:
+•	Onboarding harus bisa di-skip kapan saja (Skip button top-right)
+•	Total waktu onboarding maksimal 60 detik
+•	User bisa revisit tutorial dari Settings > Help
+
+4.2 Daily Usage Flow (Happy Path)
+8.	User buka app → Auto-navigate ke Home screen
+9.	Home screen load < 500ms dengan habits untuk hari ini
+10.	User scroll list habits (jika > 5 items)
+11.	User tap habit → Visual feedback (checkmark animation + haptic)
+12.	Streak counter update instantly (+1 jika applicable)
+13.	Progress bar di top update (X/Y completed today)
+14.	User selesai, close app atau tap back button
+Alternative Flow - Undo Check:
+•	User tap habit yang sudah checked → Uncheck dengan confirmation toast
+•	Streak tidak berubah (hanya completion status hari ini)
+
+4.3 Add New Habit Flow
+15.	User tap FAB (+) button di Home
+16.	Sheet modal slide up dari bottom (tidak full screen)
+17.	Input field: Habit name (auto-focus keyboard)
+18.	Optional: Pilih icon dari grid 20 icons (default: checkmark)
+19.	Select frequency: Daily (default) atau Weekly dengan radio buttons
+20.	Optional: Set reminder dengan time picker
+21.	User tap Save button
+22.	Validation: nama tidak kosong → show error jika invalid
+23.	Sheet dismiss, habit baru muncul di top list dengan animation
+Error Handling:
+•	Nama kosong → Error text below field: Nama habit tidak boleh kosong
+•	Nama > 50 karakter → Error: Maksimal 50 karakter
+•	User sudah punya 20 habits → Error dialog: Maksimal 20 habits, hapus yang lama
+
+4.4 Edit Habit Flow
+24.	User swipe left pada habit item → Reveal edit & delete buttons
+25.	User tap Edit → Same sheet modal seperti Add Habit
+26.	Fields pre-filled dengan data existing
+27.	User ubah nama/icon/frequency/reminder
+28.	User tap Update → Validation → Save → Sheet dismiss
+29.	Habit di-update di list tanpa re-sort position
+Alternative: Delete Flow
+•	User swipe left → tap Delete button
+•	Confirmation dialog: Hapus [Habit Name]? Data tidak bisa dikembalikan
+•	User confirm → Habit dan semua log-nya dihapus dari database
+•	Snackbar muncul: Habit dihapus dengan Undo button (5 detik)
+•	Jika Undo → restore habit dan logs
+
+4.5 View Statistics Flow
+30.	User tap tab Statistics di bottom navigation
+31.	Screen load dengan list semua habits (sorted by name)
+32.	User tap salah satu habit → Detail page slide in
+33.	Detail page menampilkan: Current streak, Best streak, Completion rate 7 hari
+34.	Simple bar chart untuk 7 hari terakhir (Mon-Sun)
+35.	User tap back → Return ke Statistics list
+
+4.6 Notification Reminder Flow
+36.	Background worker checks scheduled reminders setiap jam
+37.	Jika reminder time tercapai DAN habit belum completed → Trigger notifikasi
+38.	Notifikasi muncul di notification tray dengan: Icon, Habit name, Time to check it off!
+39.	User tap notifikasi → Deep link langsung ke habit di Home
+40.	User check habit → Notifikasi auto-dismiss
+Edge Cases:
+•	Jika user sudah complete habit sebelum reminder → No notification
+•	Jika user disable notification permission → Show in-app reminder banner
+•	Jika device dalam Do Not Disturb mode → Respect system setting
+
+5. Data Architecture & Database Schema
+5.1 Technology Stack
+Database: Room Database (SQLite wrapper for Android)
+ORM: Room with Kotlin Coroutines for async operations
+Migration Strategy: Room Auto-Migration with @AutoMigration annotation
+Backup: Local export to app-specific storage (no cloud backup in MVP)
+
+5.2 Database Schema (Room)
+Table: habits
+Stores all habit definitions created by user.
+
+Column	Type	Constraints	Description
+id	Long	PK, Auto	Unique identifier untuk habit
+name	String	NOT NULL	Nama habit (max 50 char)
+icon	String	NULLABLE	Icon identifier (e.g. running, book, sleep)
+frequency	String	NOT NULL	DAILY atau WEEKLY (enum as string)
+reminderTime	String	NULLABLE	Format HH:mm (e.g. 09:00) atau NULL jika no reminder
+isReminderEnabled	Boolean	DEFAULT TRUE	Flag untuk enable/disable reminder tanpa hapus time
+createdAt	Long	NOT NULL	Timestamp (epoch millis) saat habit dibuat
+updatedAt	Long	NOT NULL	Timestamp saat habit terakhir di-update
+sortOrder	Int	DEFAULT 0	Urutan custom untuk reordering (future feature)
+
+Indexes:
+•	PRIMARY KEY on id
+•	INDEX on createdAt for sorting by creation date
+
+Table: habit_logs
+Stores completion records for each habit on each date.
+
+Column	Type	Constraints	Description
+id	Long	PK, Auto	Unique identifier untuk log entry
+habitId	Long	FK, NOT NULL	Reference ke habits.id (CASCADE DELETE)
+date	String	NOT NULL	Format YYYY-MM-DD (e.g. 2026-02-01)
+completed	Boolean	NOT NULL	TRUE jika habit completed pada date tersebut
+completedAt	Long	NULLABLE	Timestamp (epoch) saat user tap complete (untuk analytics)
+createdAt	Long	NOT NULL	Timestamp saat log entry dibuat
+updatedAt	Long	NOT NULL	Timestamp saat log entry terakhir di-update
+
+Indexes:
+•	PRIMARY KEY on id
+•	FOREIGN KEY habitId REFERENCES habits(id) ON DELETE CASCADE
+•	UNIQUE constraint on (habitId, date) - satu habit hanya bisa punya satu log per hari
+•	INDEX on habitId for fast lookup by habit
+•	INDEX on date for date-range queries
+
+5.3 Data Logic & Business Rules
+Streak Calculation Logic
+Streak dihitung dengan algoritma berikut:
+41.	Query habit_logs untuk habitId tertentu, sorted by date DESC
+42.	Mulai dari hari ini, cek apakah completed = TRUE
+43.	Jika TRUE, increment streak dan cek hari sebelumnya (yesterday)
+44.	Jika FALSE atau tidak ada log, stop counting → return current streak
+45.	Untuk weekly habits, gunakan ISO week number sebagai unit
+
+Pseudo-code:
+
+fun calculateStreak(habitId: Long, frequency: Frequency): Int {
+  var streak = 0
+  var currentDate = LocalDate.now()
+  while (true) {
+    val log = getLogForDate(habitId, currentDate)
+    if (log?.completed != true) break
+    streak++
+    currentDate = if (frequency == DAILY) currentDate.minusDays(1)
+                  else currentDate.minusWeeks(1)
+  }
+  return streak
+}
+
+Daily Reset Logic
+Reset harian dilakukan pada jam 00:00 waktu lokal device:
+•	TIDAK menghapus data log (history tetap tersimpan)
+•	HANYA mengubah status UI untuk habit hari ini dari completed ke uncompleted
+•	Implementation: Check date saat app launch, jika != lastLaunchDate → refresh UI
+
+Timezone Handling
+Edge case untuk user yang traveling atau ganti timezone:
+•	Gunakan LocalDate berdasarkan device timezone saat ini
+•	Log date selalu dalam format ISO 8601 (YYYY-MM-DD) untuk consistency
+•	Jika user ganti timezone, streak tetap valid berdasarkan local date
+
+5.4 Database Migration Plan
+Room Auto-Migration digunakan untuk schema changes di future versions:
+46.	Version 1 (MVP): Initial schema dengan habits dan habit_logs
+47.	Version 2 (jika ada perubahan): Tambah column baru dengan @ColumnInfo(defaultValue)
+48.	Setiap migration didokumentasikan dengan @Database annotation
+49.	Fallback: Jika auto-migration gagal, gunakan destructive migration dengan warning
+
+Example migration code:
+
+@Database(
+  entities = [Habit::class, HabitLog::class],
+  version = 2,
+  autoMigrations = [AutoMigration(from = 1, to = 2)]
+)
+
+6. UI/UX Design Guidelines
+6.1 Design Philosophy
+Aplikasi ini mengadopsi Material Design 3 (Material You) dengan prinsip:
+•	Clean & Minimalist - Tidak ada visual clutter, setiap element punya tujuan jelas
+•	Fast & Responsive - Animasi smooth tapi cepat (max 300ms)
+•	Touch-Optimized - Minimum tap target 48dp x 48dp
+•	Accessible - Support untuk TalkBack, high contrast mode, dan dynamic font size
+
+6.2 Color Palette
+Color Role	Light Mode	Usage
+Primary	#4A90E2 (Blue)	FAB, buttons, checkmarks, active states
+Secondary	#6C757D (Gray)	Secondary buttons, icons, disabled states
+Background	#FFFFFF (White)	Main background, cards
+Surface	#F8F9FA (Light Gray)	Bottom sheet, dialog backgrounds
+Error	#DC3545 (Red)	Error messages, delete actions
+Success	#28A745 (Green)	Completed states, success messages
+Text Primary	#212529 (Dark Gray)	Main text content
+Text Secondary	#6C757D (Medium Gray)	Subtitles, hints, metadata
+
+Dark Mode Palette (support dari MVP):
+•	Primary: #5DA3F5 (Lighter blue untuk contrast)
+•	Background: #121212 (True black dengan slight elevation)
+•	Surface: #1E1E1E
+•	Text Primary: #FFFFFF
+•	Text Secondary: #B0B0B0
+
+6.3 Typography
+Style	Font/Size/Weight	Usage
+Headline Large	Roboto / 32sp / Bold	Screen titles
+Headline Medium	Roboto / 24sp / Bold	Section headers
+Body Large	Roboto / 16sp / Regular	Habit names, primary text
+Body Medium	Roboto / 14sp / Regular	Descriptions, secondary text
+Label Large	Roboto / 14sp / Medium	Buttons, tabs
+Label Small	Roboto / 12sp / Medium	Hints, captions, streak counter
+
+6.4 Component Specifications
+Habit List Item (Main Component)
+Dimensions: Full width x 64dp height
+Layout:
+•	Leading: Checkbox icon (24dp) dengan circular background (40dp)
+•	Content: Habit name (Body Large) + Streak indicator (Label Small)
+•	Trailing: Reminder icon (jika ada) + Edit swipe gesture
+•	Padding: 16dp horizontal, 12dp vertical
+•	Divider: 1dp gray line between items
+
+States:
+•	Default: Checkbox unchecked, gray outline
+•	Completed: Checkbox checked with primary color, text has strikethrough (optional)
+•	Pressed: Ripple effect with primary color at 12% opacity
+
+Bottom Navigation
+Height: 80dp
+Items: Home, Statistics, Settings
+Icon size: 24dp
+Label: 12sp
+Active indicator: Pill shape with primary color background
+
+Floating Action Button (FAB)
+Size: 56dp diameter
+Position: Bottom-right, 16dp from edges
+Icon: Add (+) symbol, 24dp
+Elevation: 6dp
+Color: Primary color with white icon
+
+Bottom Sheet (Add/Edit Habit)
+Corner radius: 16dp (top corners only)
+Max height: 80% of screen
+Handle: 32dp x 4dp rounded bar, centered at top
+Padding: 24dp horizontal, 16dp vertical
+Input fields: Outlined text field with 8dp corner radius
+
+6.5 Animations & Transitions
+Semua animasi menggunakan Material Motion system:
+Action	Animation	Duration
+Check habit	Scale + fade checkmark	200ms
+Uncheck habit	Reverse scale + fade	150ms
+Add new habit	Fade in + slide up from bottom	250ms
+Delete habit	Slide out + collapse	300ms
+Bottom sheet open	Slide up + fade scrim	300ms
+Screen navigation	Shared element transition	350ms
+
+Easing curves:
+•	Standard: cubic-bezier(0.4, 0.0, 0.2, 1) - untuk most transitions
+•	Decelerate: cubic-bezier(0.0, 0.0, 0.2, 1) - untuk incoming elements
+•	Accelerate: cubic-bezier(0.4, 0.0, 1, 1) - untuk outgoing elements
+
+6.6 Accessibility Requirements
+WCAG 2.1 Level AA compliance:
+•	Color contrast ratio minimum 4.5:1 untuk text, 3:1 untuk UI components
+•	Semua interactive elements minimum 48dp x 48dp tap target
+•	Support untuk TalkBack dengan content descriptions yang descriptive
+•	Support untuk Dynamic Type (font scaling hingga 200%)
+•	Tidak rely on color alone untuk convey information (gunakan icons + text)
+•	Keyboard navigation support untuk external keyboards
+
+7. Technical Implementation Details
+7.1 Technology Stack (Final Recommendation)
+Component	Technology / Library
+Language	Kotlin 1.9+ (100% Kotlin, no Java)
+UI Framework	Jetpack Compose (Material 3)
+Architecture	MVVM (Model-View-ViewModel) + Clean Architecture
+Database	Room 2.6+ (SQLite wrapper)
+Async	Kotlin Coroutines + Flow
+Dependency Injection	Hilt (Dagger for Android)
+Navigation	Jetpack Navigation Compose
+Notifications	WorkManager (for scheduled reminders)
+Widget (Phase 1.1)	Jetpack Glance (Compose for Widgets)
+Charts (Phase 1.1)	Vico (Compose-native charting library)
+Testing	JUnit 4, Mockk, Compose UI Test, Espresso
+Build System	Gradle 8.0+ with Kotlin DSL
+Min SDK	API 26 (Android 8.0 Oreo) - covers 95%+ devices
+Target SDK	API 34 (Android 14)
+
+7.2 Project Architecture
+Clean Architecture dengan layer separation:
+
+app/src/main/java/com/habittracker/
+├── data/                  # Data layer
+│   ├── local/             # Room database
+│   │   ├── dao/           # Data Access Objects
+│   │   ├── entity/        # Room entities
+│   │   └── HabitDatabase.kt
+│   ├── repository/        # Repository implementations
+│   └── mapper/            # Entity <-> Domain model mapping
+├── domain/                # Business logic layer
+│   ├── model/             # Domain models (clean objects)
+│   ├── repository/        # Repository interfaces
+│   └── usecase/           # Use cases (business logic)
+├── presentation/          # UI layer
+│   ├── home/              # Home screen
+│   │   ├── HomeScreen.kt
+│   │   └── HomeViewModel.kt
+│   ├── habit/             # Add/Edit habit
+│   ├── statistics/        # Statistics screen
+│   ├── settings/          # Settings screen
+│   ├── components/        # Reusable UI components
+│   └── theme/             # Material theme config
+├── worker/                # Background workers
+│   └── ReminderWorker.kt  # WorkManager for notifications
+├── di/                    # Dependency Injection modules
+└── HabitTrackerApp.kt     # Application class
+
+7.3 Key Implementation Details
+7.3.1 Room Database Configuration
+@Database(
+  entities = [HabitEntity::class, HabitLogEntity::class],
+  version = 1,
+  exportSchema = true
+)
+abstract class HabitDatabase : RoomDatabase() {
+  abstract fun habitDao(): HabitDao
+  abstract fun habitLogDao(): HabitLogDao
+}
+
+7.3.2 WorkManager Reminder Setup
+Scheduled dengan PeriodicWorkRequest:
+
+val reminderWork = PeriodicWorkRequestBuilder<ReminderWorker>(
+  repeatInterval = 1,
+  repeatIntervalTimeUnit = TimeUnit.HOURS
+)
+  .setConstraints(
+    Constraints.Builder()
+      .setRequiresBatteryNotLow(true)
+      .build()
+  )
+  .build()
+
+ReminderWorker logic:
+50.	Query habits dengan reminderTime not null dan isReminderEnabled = true
+51.	Untuk setiap habit, cek apakah current time matches reminderTime (±5 min tolerance)
+52.	Cek apakah habit sudah completed hari ini via habit_logs
+53.	Jika belum completed → trigger notification dengan NotificationManager
+54.	Set PendingIntent untuk deep link ke habit saat notification di-tap
+
+7.3.3 Streak Calculation (Repository Level)
+suspend fun calculateStreak(habitId: Long): Int {
+  val frequency = habitDao.getHabitById(habitId).frequency
+  var streak = 0
+  var currentDate = LocalDate.now()
+  
+  while (true) {
+    val log = habitLogDao.getLogForDate(habitId, currentDate.toString())
+    if (log == null || !log.completed) break
+    streak++
+    currentDate = when (frequency) {
+      DAILY -> currentDate.minusDays(1)
+      WEEKLY -> currentDate.minusWeeks(1)
+    }
+  }
+  return streak
+}
+
+Cached di ViewModel dengan StateFlow untuk performance.
+
+7.4 Performance Optimization
+•	LazyColumn untuk habit list (lazy loading, recycle views)
+•	Database queries di background thread dengan Dispatchers.IO
+•	Debouncing untuk search/filter (jika ada)
+•	Minimize recompositions dengan remember dan derivedStateOf
+•	Image assets di WebP format untuk smaller APK size
+•	ProGuard/R8 enabled untuk code shrinking di release build
+
+7.5 Error Handling Strategy
+3-tier error handling:
+55.	Data Layer: Try-catch di repository, return Result<T> sealed class
+56.	Domain Layer: Validate business rules, return Either<Error, Success>
+57.	Presentation Layer: Convert errors to user-friendly messages di ViewModel
+
+Error types:
+•	DatabaseError: Room query failures → Show generic error + retry button
+•	ValidationError: Invalid input → Show inline error below field
+•	NotificationError: Permission denied → Show settings redirect dialog
+
+7.6 Security & Privacy
+Data protection measures:
+•	All data stored in app-specific internal storage (MODE_PRIVATE)
+•	No network requests → no data leaves device
+•	No analytics or crash reporting SDKs di MVP (optional di future)
+•	No permissions required except POST_NOTIFICATIONS (runtime)
+•	Clear data option di Settings untuk user privacy control
+
+8. Testing & Quality Assurance
+8.1 Testing Pyramid
+Test Type	Coverage Target	Tools
+Unit Tests	80%+ code coverage	JUnit 4, Mockk, Turbine (for Flow testing)
+Integration Tests	Critical paths	Room in-memory DB, Hilt testing
+UI Tests	Happy paths + errors	Compose UI Test, Espresso
+Manual Testing	Full regression	Real devices (min 5 different models)
+
+8.2 Test Cases (Critical Scenarios)
+Unit Tests
+•	Streak calculation dengan berbagai edge cases (skip days, weekly habits)
+•	Date formatting dan timezone handling
+•	Validation logic untuk habit name, reminder time
+•	Repository CRUD operations dengan mock DAO
+•	ViewModel state transitions
+
+Integration Tests
+•	Database migrations (version 1 → version 2)
+•	WorkManager reminder triggering
+•	End-to-end flow: Add habit → Complete → Check streak
+
+UI Tests
+•	Home screen: Tap habit → verify checked state
+•	Add habit flow: Fill form → save → verify in list
+•	Delete habit: Swipe → confirm → verify removed + undo
+•	Settings: Toggle dark mode → verify theme change
+
+8.3 Device Testing Matrix
+Minimum 5 physical devices covering:
+•	Low-end: Samsung Galaxy A series (2GB RAM)
+•	Mid-range: Google Pixel 6a
+•	High-end: Samsung Galaxy S23
+•	Tablet: Samsung Galaxy Tab S8
+•	Old Android: Device dengan Android 8.0 (API 26)
+
+8.4 Performance Benchmarks
+Metric	Target	Measurement Tool
+App launch time (cold start)	< 2 seconds	Android Profiler
+Home screen render time	< 500ms	Macrobenchmark
+Database query time (100 habits)	< 100ms	Room query time logging
+APK size	< 20MB	Build output
+Memory usage (idle)	< 100MB	Android Profiler
+Battery drain (per hour active use)	< 5%	Battery Historian
+
+8.5 Definition of Done (DoD) - Quality Gates
+Setiap feature harus pass semua checklist ini sebelum merge ke main:
+✓	All unit tests passing (min 80% coverage)
+✓	Integration tests passing untuk critical paths
+✓	UI tests passing untuk happy path + 1 error case
+✓	Manual testing pada min 2 physical devices
+✓	No critical bugs (crash, data loss, security issues)
+✓	Code review approved oleh min 1 reviewer
+✓	Accessibility checklist passed (TalkBack, contrast ratio)
+✓	Performance benchmarks met (launch < 2s, render < 500ms)
+
+9. Development Plan & Timeline
+9.1 Development Phases
+Phase 0: Project Setup (Week 1)
+•	Initialize Android project dengan Kotlin + Compose + Hilt
+•	Setup Room database dengan initial schema
+•	Configure Git repository, CI/CD pipeline (GitHub Actions)
+•	Design system implementation (colors, typography, components)
+•	Project architecture scaffolding (packages, base classes)
+Deliverable: Project compiles, empty Home screen navigates
+
+Phase 1: Core Features (Week 2-3)
+•	Implement Habit CRUD (Add, Edit, Delete)
+•	Daily checklist UI dengan tap-to-complete
+•	Basic streak calculation logic
+•	Room database integration dengan repository pattern
+•	Navigation between Home, Add Habit, Settings
+Deliverable: User dapat add habits, complete daily, dan lihat streak
+
+Phase 2: Reminder System (Week 4)
+•	WorkManager setup untuk scheduled reminders
+•	Notification UI dengan deep linking
+•	Reminder time picker di Add/Edit Habit
+•	Permission handling untuk POST_NOTIFICATIONS
+Deliverable: Reminder notifications working end-to-end
+
+Phase 3: Polish & Testing (Week 5)
+•	Dark mode implementation
+•	Settings screen (theme toggle, clear data, about)
+•	Error handling di semua screens
+•	Unit + Integration tests untuk critical paths
+•	UI tests untuk main flows
+•	Performance optimization (profiling, memory leaks)
+Deliverable: MVP feature-complete dengan tests passing
+
+Phase 4: Beta Testing (Week 6)
+•	Internal testing di 5+ devices
+•	Bug fixes dari testing
+•	Onboarding flow implementation
+•	App icon, splash screen, Play Store assets
+•	Privacy policy page (required untuk Play Store)
+Deliverable: Beta APK ready untuk external testing
+
+Phase 5: Production Release (Week 7)
+•	Play Store listing (screenshots, description, promo video)
+•	Final QA pass
+•	Generate signed release APK/AAB
+•	Submit ke Google Play Store
+•	Monitor crash reports dan user feedback
+Deliverable: App live di Play Store
+
+9.2 Timeline Gantt Chart
+Phase	W1	W2	W3	W4	W5	W6
+Setup	███					
+Core Features		███	███			
+Reminders				███		
+Polish & Test					███	
+Beta + Release						███
+
+Total development time: 6-7 weeks untuk solo developer
+Add 2-3 weeks buffer untuk unexpected issues → Total 8-10 weeks safe estimate
+
+9.3 Team Roles & Responsibilities
+For solo developer:
+•	Wear all hats: Android dev, UI/UX design, QA tester, project manager
+•	Focus on MVP scope, resist feature creep
+•	Use AI tools (ChatGPT, GitHub Copilot) untuk productivity boost
+
+For small team (2-3 people):
+•	Developer 1 (Lead): Core features + Architecture
+•	Developer 2: Reminder system + Testing
+•	Designer (part-time): UI/UX mockups + Play Store assets
+
+9.4 Risk Management
+Risk	Impact	Mitigation
+WorkManager tidak reliable di beberapa devices	High - core feature	Test di 10+ devices, fallback ke AlarmManager jika perlu
+Performance issue dengan 100+ habits	Medium	Implement pagination, lazy loading, database indexing
+Scope creep (feature requests)	High - delay	Strict MVP adherence, park requests untuk v2.0
+Play Store rejection	Medium	Follow guidelines strictly, prepare privacy policy
+Solo developer burnout	High - project stall	Realistic timeline dengan buffer, take breaks
+
+10. Post-Launch Strategy
+10.1 Metrics to Track (Week 1-4 after launch)
+•	Downloads: Target 100+ dalam minggu pertama
+•	DAU/MAU ratio: Target > 30% (sticky app)
+•	Crash-free rate: Target > 99%
+•	User ratings: Target average > 4.0 stars
+•	Retention: D1=60%, D7=40%, D30=20%
+
+10.2 User Feedback Collection
+•	In-app feedback form di Settings
+•	Monitor Play Store reviews dan respond aktif
+•	Optional: Discord/Telegram community untuk power users
+•	Survey setelah 7 hari usage (optional)
+
+10.3 Iteration Plan (v1.1, v1.2)
+Version 1.1 (1-2 bulan after launch)
+•	Weekly progress chart implementation
+•	Home screen widget
+•	Habit templates library (20+ presets)
+•	Export data ke CSV (privacy-preserving)
+•	Bug fixes dari user reports
+
+Version 1.2 (3-4 bulan after launch)
+•	Habit categories untuk organization
+•	Monthly statistics view
+•	Customizable themes (color picker)
+•	Backup/restore to local file
+
+Version 2.0 (6+ bulan after launch - IF user demand)
+•	Optional cloud sync dengan end-to-end encryption
+•	Cross-device sync (Android + Web)
+•	Advanced gamification (achievements)
+•	Social features (habit sharing with friends)
+
+10.4 Monetization Strategy (Optional - Future)
+MVP adalah 100% free tanpa ads. Future monetization options:
+•	Freemium model: Pro version dengan advanced statistics, unlimited habits (vs 20 limit)
+•	One-time purchase ($2.99-$4.99) - no subscription
+•	Donate/tip jar untuk support development
+•	NO ADS - preserve user experience
+
+Timeline: Monetization ONLY after 10k+ active users dan strong retention metrics
+
+11. Appendix
+11.1 Glossary
+Term	Definition
+MVP	Minimum Viable Product - versi paling sederhana yang tetap memberikan value ke user
+Streak	Jumlah hari/minggu berturut-turut user complete habit tanpa skip
+DAU	Daily Active Users - jumlah unique users yang buka app per hari
+Room	Android library untuk local database (SQLite wrapper)
+WorkManager	Android library untuk background tasks yang reliable
+Compose	Modern UI toolkit untuk Android (declarative UI)
+DXA	Drawing Units - satuan ukuran dalam docx (1440 DXA = 1 inch)
+
+11.2 References & Resources
+•	Material Design 3: https://m3.material.io/
+•	Jetpack Compose: https://developer.android.com/jetpack/compose
+•	Room Database: https://developer.android.com/training/data-storage/room
+•	WorkManager: https://developer.android.com/topic/libraries/architecture/workmanager
+•	Android App Architecture: https://developer.android.com/topic/architecture
+
+11.3 Contact & Approval
+Document Owner: [Your Name]
+Last Updated: February 1, 2026
+Version: 2.0 - Production Ready
+
+Approval	Name	Date
+Product Owner		
+Lead Developer		
+QA Lead		
+
+
+— END OF DOCUMENT —
