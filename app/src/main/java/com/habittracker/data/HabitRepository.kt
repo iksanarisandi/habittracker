@@ -96,6 +96,10 @@ class HabitRepository(private val habitDao: HabitDao) {
     suspend fun getHabitLog(habitId: Long, date: LocalDate): HabitLog? {
         return habitDao.getHabitLog(habitId, date.toString())
     }
+
+    suspend fun getLogsForRange(startDate: LocalDate, endDate: LocalDate): List<HabitLog> {
+        return habitDao.getLogsBetweenDates(startDate.toString(), endDate.toString())
+    }
     
     suspend fun getHabitCount(): Int {
         return habitDao.getAllHabits().firstOrNull()?.size ?: 0

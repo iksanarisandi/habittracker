@@ -39,6 +39,9 @@ interface HabitDao {
     @Query("SELECT * FROM habit_logs WHERE habitId = :habitId ORDER BY date DESC")
     suspend fun getHabitLogs(habitId: Long): List<HabitLog>
 
+    @Query("SELECT * FROM habit_logs WHERE date BETWEEN :startDate AND :endDate")
+    suspend fun getLogsBetweenDates(startDate: String, endDate: String): List<HabitLog>
+
     // Combined/Transaction
     @Transaction
     suspend fun toggleHabitCompletion(habitId: Long, date: String, completed: Boolean) {

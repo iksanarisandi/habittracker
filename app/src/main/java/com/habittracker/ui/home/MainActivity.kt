@@ -1,165 +1,53 @@
 package com.habittracker.ui.home
 
-import android.content.DialogInterface
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.habittracker.HabitApplication
+import androidx.fragment.app.Fragment
 import com.habittracker.R
-import com.habittracker.data.HabitRepository
 import com.habittracker.databinding.ActivityMainBinding
-import com.habittracker.ui.add.AddHabitBottomSheet
+import com.habittracker.ui.settings.SettingsFragment
+import com.habittracker.ui.statistics.StatisticsFragment
 
-class MainActivity : AppCompatActivity(), HomeContract.View {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var presenter: HomeContract.Presenter
-    private lateinit var adapter: HabitAdapter
-
-    private val dateReceiver = object : android.content.BroadcastReceiver() {
-        override fun onReceive(context: android.content.Context?, intent: android.content.Intent?) {
-            if (intent?.action == android.content.Intent.ACTION_DATE_CHANGED) {
-                presenter.loadHabits()
-            }
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setupDependencies()
-        setupRecyclerView()
-        setupListeners()
-        checkNotificationPermission()
-        
-        presenter.loadHabits()
-        
-        registerReceiver(dateReceiver, android.content.IntentFilter(android.content.Intent.ACTION_DATE_CHANGED))
+        setupBottomNavigation()
+
+        // Set default fragment
+        if (savedInstanceState == null) {
+            replaceFragment(HomeFragment())
+        }
     }
 
-    override fun onDestroy() {
-        unregisterReceiver(dateReceiver)
-        presenter.detach()
-        super.onDestroy()
-    }
-
-    private fun checkNotificationPermission() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != 
-                android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 101)
+    private fun setupBottomNavigation() {
+        binding.bottomNavigation.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_home -> {
+                    replaceFragment(HomeFragment())
+                    true
+                }
+                R.id.nav_statistics -> {
+                    replaceFragment(StatisticsFragment())
+                    true
+                }
+                R.id.nav_settings -> {
+                    replaceFragment(SettingsFragment())
+                    true
+                }
+                else -> false
             }
         }
     }
 
-    private fun setupDependencies() {
-        val database = (application as HabitApplication).database
-        val repository = HabitRepository(database.habitDao())
-        presenter = HomePresenter(this, repository)
-    }
-
-    private fun setupRecyclerView() {
-        adapter = HabitAdapter(
-            onToggle = { habit, isCompleted ->
-                presenter.toggleHabit(habit, isCompleted)
-            },
-            onDelete = { habit ->
-                showDeleteConfirmation(habit)
-            },
-            onEdit = { habit ->
-                showEditHabitDialog(habit)
-            }
-        )
-        binding.recyclerView.layoutManager = LinearLayoutManager(this)
-        binding.recyclerView.adapter = adapter
-    }
-
-    private fun setupListeners() {
-        binding.fabAdd.setOnClickListener {
-            showAddHabitDialog()
-        }
-    }
-
-    private fun showAddHabitDialog() {
-        val bottomSheet = AddHabitBottomSheet(null) { name, frequency, reminderTime, isReminderEnabled ->
-            presenter.addHabit(name, frequency, reminderTime, isReminderEnabled)
-        }
-        bottomSheet.show(supportFragmentManager, AddHabitBottomSheet.TAG)
-    }
-
-    private fun showEditHabitDialog(habit: com.habittracker.data.local.entity.Habit) {
-        val bottomSheet = AddHabitBottomSheet(habit) { name, frequency, reminderTime, isReminderEnabled ->
-            val updatedHabit = habit.copy(
-                name = name,
-                frequency = frequency,
-                reminderTime = reminderTime,
-                isReminderEnabled = isReminderEnabled,
-                updatedAt = System.currentTimeMillis()
-            )
-            presenter.updateHabit(updatedHabit)
-        }
-        bottomSheet.show(supportFragmentManager, AddHabitBottomSheet.TAG)
-    }
-
-    private fun showDeleteConfirmation(habit: com.habittracker.data.local.entity.Habit) {
-        AlertDialog.Builder(this)
-            .setTitle("Delete Habit")
-            .setMessage("Are you sure you want to delete '${habit.name}'?")
-            .setPositiveButton("Delete") { _, _ ->
-                presenter.deleteHabit(habit)
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
-    }
-
-    override fun showHabits(habits: List<HabitUiModel>) {
-        binding.progressBar.visibility = View.GONE
-        binding.emptyStateText.visibility = View.GONE
-        binding.recyclerView.visibility = View.VISIBLE
-        adapter.submitList(habits)
-
-        // Update Progress
-        val completed = habits.count { it.isCompletedToday }
-        val total = habits.size
-        if (total > 0) {
-            binding.progressBarDaily.max = total
-            binding.progressBarDaily.progress = completed
-            binding.tvProgressText.text = "$completed/$total completed today"
-            binding.progressBarDaily.visibility = View.VISIBLE
-            binding.tvProgressText.visibility = View.VISIBLE
-        } else {
-            binding.progressBarDaily.visibility = View.GONE
-            binding.tvProgressText.visibility = View.GONE
-        }
-    }
-
-    override fun showEmptyState() {
-        binding.progressBar.visibility = View.GONE
-        binding.emptyStateText.visibility = View.VISIBLE
-        binding.recyclerView.visibility = View.GONE
-        adapter.submitList(emptyList())
-        binding.progressBarDaily.visibility = View.GONE
-        binding.tvProgressText.visibility = View.GONE
-    }
-
-    override fun showError(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-    }
-
-    override fun showLoading() {
-        if (adapter.currentList.isEmpty()) {
-            binding.progressBar.visibility = View.VISIBLE
-            binding.emptyStateText.visibility = View.GONE
-        }
-    }
-
-    override fun hideLoading() {
-        binding.progressBar.visibility = View.GONE
+    private fun replaceFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainer, fragment)
+            .commit()
     }
 }
