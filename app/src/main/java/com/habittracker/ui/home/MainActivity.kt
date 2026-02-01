@@ -20,6 +20,14 @@ class MainActivity : AppCompatActivity(), HomeContract.View {
     private lateinit var presenter: HomeContract.Presenter
     private lateinit var adapter: HabitAdapter
 
+    private val dateReceiver = object : android.content.BroadcastReceiver() {
+        override fun onReceive(context: android.content.Context?, intent: android.content.Intent?) {
+            if (intent?.action == android.content.Intent.ACTION_DATE_CHANGED) {
+                presenter.loadHabits()
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -31,8 +39,16 @@ class MainActivity : AppCompatActivity(), HomeContract.View {
         checkNotificationPermission()
         
         presenter.loadHabits()
+        
+        registerReceiver(dateReceiver, android.content.IntentFilter(android.content.Intent.ACTION_DATE_CHANGED))
     }
-    
+
+    override fun onDestroy() {
+        unregisterReceiver(dateReceiver)
+        presenter.detach()
+        super.onDestroy()
+    }
+
     private fun checkNotificationPermission() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
             if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != 
@@ -55,6 +71,9 @@ class MainActivity : AppCompatActivity(), HomeContract.View {
             },
             onDelete = { habit ->
                 showDeleteConfirmation(habit)
+            },
+            onEdit = { habit ->
+                showEditHabitDialog(habit)
             }
         )
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
@@ -104,6 +123,20 @@ class MainActivity : AppCompatActivity(), HomeContract.View {
         binding.emptyStateText.visibility = View.GONE
         binding.recyclerView.visibility = View.VISIBLE
         adapter.submitList(habits)
+
+        // Update Progress
+        val completed = habits.count { it.isCompletedToday }
+        val total = habits.size
+        if (total > 0) {
+            binding.progressBarDaily.max = total
+            binding.progressBarDaily.progress = completed
+            binding.tvProgressText.text = "$completed/$total completed today"
+            binding.progressBarDaily.visibility = View.VISIBLE
+            binding.tvProgressText.visibility = View.VISIBLE
+        } else {
+            binding.progressBarDaily.visibility = View.GONE
+            binding.tvProgressText.visibility = View.GONE
+        }
     }
 
     override fun showEmptyState() {
@@ -111,6 +144,8 @@ class MainActivity : AppCompatActivity(), HomeContract.View {
         binding.emptyStateText.visibility = View.VISIBLE
         binding.recyclerView.visibility = View.GONE
         adapter.submitList(emptyList())
+        binding.progressBarDaily.visibility = View.GONE
+        binding.tvProgressText.visibility = View.GONE
     }
 
     override fun showError(message: String) {
@@ -126,10 +161,5 @@ class MainActivity : AppCompatActivity(), HomeContract.View {
 
     override fun hideLoading() {
         binding.progressBar.visibility = View.GONE
-    }
-
-    override fun onDestroy() {
-        presenter.detach()
-        super.onDestroy()
     }
 }

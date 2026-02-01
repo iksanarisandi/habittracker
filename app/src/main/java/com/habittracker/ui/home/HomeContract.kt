@@ -5,7 +5,8 @@ import com.habittracker.data.local.entity.Habit
 data class HabitUiModel(
     val habit: Habit,
     val isCompletedToday: Boolean,
-    val currentStreak: Int
+    val currentStreak: Int,
+    val bestStreak: Int
 )
 
 interface HomeContract {

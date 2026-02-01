@@ -105,6 +105,11 @@ class AddHabitBottomSheet(
                 return@setOnClickListener
             }
 
+            if (name.length > 50) {
+                binding.tilName.error = "Max 50 characters"
+                return@setOnClickListener
+            }
+
             val frequency = if (binding.rbDaily.isChecked) "DAILY" else "WEEKLY"
             val isReminderEnabled = binding.switchReminder.isChecked
             

@@ -11,7 +11,8 @@ import com.habittracker.databinding.ItemHabitBinding
 
 class HabitAdapter(
     private val onToggle: (Habit, Boolean) -> Unit,
-    private val onDelete: (Habit) -> Unit
+    private val onDelete: (Habit) -> Unit,
+    private val onEdit: (Habit) -> Unit
 ) : ListAdapter<HabitUiModel, HabitAdapter.HabitViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HabitViewHolder {
@@ -28,7 +29,7 @@ class HabitAdapter(
 
         fun bind(model: HabitUiModel) {
             binding.tvHabitName.text = model.habit.name
-            binding.tvStreak.text = "${model.currentStreak} day streak"
+            binding.tvStreak.text = "${model.currentStreak} streak • Best: ${model.bestStreak}"
             
             // Remove listener to avoid triggering it while setting state
             binding.cbComplete.setOnCheckedChangeListener(null)

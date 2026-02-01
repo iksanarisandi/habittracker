@@ -16,11 +16,14 @@ class HomePresenter(
     private val repository: HabitRepository
 ) : HomeContract.Presenter {
 
-    private val scope = CoroutineScope(Dispatchers.Main + Job())
+    private val scope = CoroutineScope(Dispatchers.Main + kotlinx.coroutines.SupervisorJob())
+
+    private var loadJob: Job? = null
 
     override fun loadHabits() {
+        loadJob?.cancel()
         view?.showLoading()
-        scope.launch {
+        loadJob = scope.launch {
             repository.allHabits
                 .catch { e ->
                     view?.hideLoading()
@@ -39,7 +42,10 @@ class HomePresenter(
                             val streak = withContext(Dispatchers.IO) {
                                 repository.calculateStreak(habit)
                             }
-                            HabitUiModel(habit, log?.completed == true, streak)
+                            val bestStreak = withContext(Dispatchers.IO) {
+                                repository.calculateBestStreak(habit)
+                            }
+                            HabitUiModel(habit, log?.completed == true, streak, bestStreak)
                         }
                         view?.hideLoading()
                         view?.showHabits(uiModels)
@@ -116,10 +122,6 @@ class HomePresenter(
 
     override fun detach() {
         view = null
-        // Cancel job if needed, but for simple MVP with Flow, 
-        // collecting in Activity scope or ViewModel scope is better. 
-        // Here we use a custom scope, so we should cancel it.
-        // For simplicity in this MVP, we might leak if not careful.
-        // Better to use ViewModel but user asked for MVP.
+        scope.cancel()
     }
 }

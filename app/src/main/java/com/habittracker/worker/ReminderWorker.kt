@@ -46,7 +46,12 @@ class ReminderWorker(
                     // Format reminderTime "HH:mm"
                     try {
                         val reminderTime = LocalTime.parse(habit.reminderTime)
-                        if (now.hour == reminderTime.hour) {
+                        
+                        val nowMinutes = now.hour * 60 + now.minute
+                        val reminderMinutes = reminderTime.hour * 60 + reminderTime.minute
+                        
+                        // Check if within 15 minutes (since worker interval might be 15 min minimum)
+                        if (kotlin.math.abs(nowMinutes - reminderMinutes) <= 15) {
                             showNotification(habit.name, habit.id.toInt())
                         }
                     } catch (e: Exception) {
