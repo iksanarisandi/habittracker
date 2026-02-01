@@ -84,7 +84,7 @@ class StatisticsFragment : Fragment(), StatisticsContract.View {
                 val percentage = data[date] ?: 0f
                 
                 // Bind using ViewBinding for the included layout
-                val barBinding = ItemChartBarBinding.bind(includeBar.root)
+                val barBinding = ItemChartBarBinding.bind(includeBar)
                 
                 // Set Day Label (e.g., "Mon")
                 barBinding.tvDay.text = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()).take(1)
