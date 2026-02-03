@@ -78,13 +78,10 @@ class StatisticsFragment : Fragment(), StatisticsContract.View {
         if (sortedDates.isEmpty()) return
 
         // Fill bars
-        bars.forEachIndexed { index, includeBar ->
+        bars.forEachIndexed { index, barBinding ->
             if (index < sortedDates.size) {
                 val date = sortedDates[index]
                 val percentage = data[date] ?: 0f
-
-                // Use ViewBinding to properly bind the included layout
-                val barBinding = ItemChartBarBinding.bind(includeBar)
 
                 // Set Day Label (e.g., "Mon")
                 barBinding.tvDay.text = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()).take(1)
