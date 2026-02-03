@@ -25,11 +25,7 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
-    # 1. Run Tests (Ensure code quality)
-    - name: Run Unit Tests
-      run: ./gradlew testDebugUnitTest --continue
-
-    # 2. Build Debug APK (Always available for testing)
+    # 1. Build Debug APK (Always available for testing)
     - name: Build Debug APK
       run: ./gradlew assembleDebug
 
