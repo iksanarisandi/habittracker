@@ -199,9 +199,9 @@ if [ -x /usr/bin/sh ]; then
     # Disable tracing for this command only.
     set +x
     # Re-enable tracing if it was enabled before.
-    if [ "$-" = *x* ]; then
-        set -x
-    fi
+    case "$-" in
+        *x*) set -x ;;
+    esac
 fi
 
 # Use "xargs" to parse quoted args.
