@@ -16,7 +16,8 @@ class HomePresenter(
     private val repository: HabitRepository
 ) : HomeContract.Presenter {
 
-    private val scope = CoroutineScope(Dispatchers.Main + kotlinx.coroutines.SupervisorJob())
+    private val job = kotlinx.coroutines.SupervisorJob()
+    private val scope = CoroutineScope(Dispatchers.Main + job)
 
     private var loadJob: Job? = null
 
@@ -122,6 +123,6 @@ class HomePresenter(
 
     override fun detach() {
         view = null
-        scope.cancel()
+        job.cancel()
     }
 }

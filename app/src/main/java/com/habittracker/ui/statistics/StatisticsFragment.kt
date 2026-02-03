@@ -82,12 +82,13 @@ class StatisticsFragment : Fragment(), StatisticsContract.View {
             if (index < sortedDates.size) {
                 val date = sortedDates[index]
                 val percentage = data[date] ?: 0f
-                
-                // Bind using ViewBinding for the included layout
-                val barBinding = ItemChartBarBinding.bind(includeBar)
-                
+
+                // Access views using findViewById on the included layout
+                val tvDay = includeBar.findViewById<android.widget.TextView>(com.habittracker.R.id.tvDay)
+                val barView = includeBar.findViewById<android.view.View>(com.habittracker.R.id.barView)
+
                 // Set Day Label (e.g., "Mon")
-                barBinding.tvDay.text = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()).take(1)
+                tvDay.text = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()).take(1)
                 
                 // Set Bar Height
                 // Max height is 100dp (defined in parent container as 150dp, let's say max bar is 100dp)
@@ -98,21 +99,21 @@ class StatisticsFragment : Fragment(), StatisticsContract.View {
                 // To animate height, we can set layout_height or layout_weight if inside vertical linear layout.
                 // Here barView is inside vertical LinearLayout.
                 
-                val params = barBinding.barView.layoutParams
+                val params = barView.layoutParams
                 // Set height based on percentage (max 100dp approx or proportional)
                 // Let's use a fixed max height of 120dp for the bar part
                 val density = resources.displayMetrics.density
                 val maxHeight = 120 * density
                 params.height = (maxHeight * percentage).toInt().coerceAtLeast((1 * density).toInt()) // Min 1dp to show baseline
-                barBinding.barView.layoutParams = params
-                
+                barView.layoutParams = params
+
                 // Highlight today
                 if (date == LocalDate.now()) {
-                    barBinding.tvDay.setTypeface(null, android.graphics.Typeface.BOLD)
-                    barBinding.barView.alpha = 1.0f
+                    tvDay.setTypeface(null, android.graphics.Typeface.BOLD)
+                    barView.alpha = 1.0f
                 } else {
-                    barBinding.tvDay.setTypeface(null, android.graphics.Typeface.NORMAL)
-                    barBinding.barView.alpha = 0.6f
+                    tvDay.setTypeface(null, android.graphics.Typeface.NORMAL)
+                    barView.alpha = 0.6f
                 }
             }
         }

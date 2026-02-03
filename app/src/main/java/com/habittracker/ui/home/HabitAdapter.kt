@@ -28,18 +28,18 @@ class HabitAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(model: HabitUiModel) {
-            binding.tvHabitName.text = model.habit.name
+            binding.tvName.text = model.habit.name
             binding.tvStreak.text = "${model.currentStreak} streak • Best: ${model.bestStreak}"
-            
+
             // Remove listener to avoid triggering it while setting state
             binding.cbComplete.setOnCheckedChangeListener(null)
             binding.cbComplete.isChecked = model.isCompletedToday
-            
+
             // Strikethrough if completed
             if (model.isCompletedToday) {
-                binding.tvHabitName.paintFlags = binding.tvHabitName.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                binding.tvName.paintFlags = binding.tvName.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
             } else {
-                binding.tvHabitName.paintFlags = binding.tvHabitName.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
+                binding.tvName.paintFlags = binding.tvName.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
             }
 
             binding.cbComplete.setOnCheckedChangeListener { _, isChecked ->

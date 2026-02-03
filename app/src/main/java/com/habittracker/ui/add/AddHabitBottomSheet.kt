@@ -101,7 +101,7 @@ class AddHabitBottomSheet(
         binding.btnSave.setOnClickListener {
             val name = binding.etName.text.toString().trim()
             if (name.isEmpty()) {
-                binding.tilName.error = getString(R.string.habit_name_hint) // Should define proper error string
+                binding.tilName.error = "Habit name cannot be empty"
                 return@setOnClickListener
             }
 

@@ -80,7 +80,7 @@ class ReminderWorker(
         )
 
         val builder = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.mipmap.ic_launcher) // Use app icon for now
+            .setSmallIcon(android.R.drawable.ic_menu_info_details) // Use Android system icon
             .setContentTitle("Habit Reminder")
             .setContentText("Time to $habitName!")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
