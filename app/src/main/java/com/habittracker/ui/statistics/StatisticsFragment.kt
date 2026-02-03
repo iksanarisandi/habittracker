@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.habittracker.HabitApplication
@@ -84,12 +83,11 @@ class StatisticsFragment : Fragment(), StatisticsContract.View {
                 val date = sortedDates[index]
                 val percentage = data[date] ?: 0f
 
-                // Access views using findViewById on the included layout
-                val tvDay = includeBar.findViewById<TextView>(com.habittracker.R.id.tvDay)
-                val barView = includeBar.findViewById<View>(com.habittracker.R.id.barView)
+                // Use ViewBinding to properly bind the included layout
+                val barBinding = ItemChartBarBinding.bind(includeBar)
 
                 // Set Day Label (e.g., "Mon")
-                tvDay.text = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()).take(1)
+                barBinding.tvDay.text = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()).take(1)
                 
                 // Set Bar Height
                 // Max height is 100dp (defined in parent container as 150dp, let's say max bar is 100dp)
@@ -99,22 +97,22 @@ class StatisticsFragment : Fragment(), StatisticsContract.View {
                 // Each bar item is vertical.
                 // To animate height, we can set layout_height or layout_weight if inside vertical linear layout.
                 // Here barView is inside vertical LinearLayout.
-                
-                val params = barView.layoutParams
+
+                val params = barBinding.barView.layoutParams
                 // Set height based on percentage (max 100dp approx or proportional)
                 // Let's use a fixed max height of 120dp for the bar part
                 val density = resources.displayMetrics.density
                 val maxHeight = 120 * density
                 params.height = (maxHeight * percentage).toInt().coerceAtLeast((1 * density).toInt()) // Min 1dp to show baseline
-                barView.layoutParams = params
+                barBinding.barView.layoutParams = params
 
                 // Highlight today
                 if (date == LocalDate.now()) {
-                    tvDay.setTypeface(null, android.graphics.Typeface.BOLD)
-                    barView.alpha = 1.0f
+                    barBinding.tvDay.setTypeface(null, android.graphics.Typeface.BOLD)
+                    barBinding.barView.alpha = 1.0f
                 } else {
-                    tvDay.setTypeface(null, android.graphics.Typeface.NORMAL)
-                    barView.alpha = 0.6f
+                    barBinding.tvDay.setTypeface(null, android.graphics.Typeface.NORMAL)
+                    barBinding.barView.alpha = 0.6f
                 }
             }
         }
