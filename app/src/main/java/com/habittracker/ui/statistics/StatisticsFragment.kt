@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.habittracker.HabitApplication
@@ -84,8 +85,8 @@ class StatisticsFragment : Fragment(), StatisticsContract.View {
                 val percentage = data[date] ?: 0f
 
                 // Access views using findViewById on the included layout
-                val tvDay = includeBar.findViewById<android.widget.TextView>(com.habittracker.R.id.tvDay)
-                val barView = includeBar.findViewById<android.view.View>(com.habittracker.R.id.barView)
+                val tvDay = includeBar.findViewById<TextView>(com.habittracker.R.id.tvDay)
+                val barView = includeBar.findViewById<View>(com.habittracker.R.id.barView)
 
                 // Set Day Label (e.g., "Mon")
                 tvDay.text = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()).take(1)
