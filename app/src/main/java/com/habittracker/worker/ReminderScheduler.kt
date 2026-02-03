@@ -53,7 +53,7 @@ object ReminderScheduler {
             // Enqueue unique work for this habit
             WorkManager.getInstance(context).enqueueUniquePeriodicWork(
                 "habit_reminder_${habit.id}",
-                ExistingPeriodicWorkPolicy.KEEP,
+                ExistingPeriodicWorkPolicy.UPDATE,
                 reminderWork
             )
         } catch (e: Exception) {
