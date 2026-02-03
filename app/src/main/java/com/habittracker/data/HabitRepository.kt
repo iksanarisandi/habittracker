@@ -11,8 +11,10 @@ class HabitRepository(private val habitDao: HabitDao) {
 
     val allHabits: Flow<List<Habit>> = habitDao.getAllHabits()
 
-    suspend fun insertHabit(habit: Habit) {
-        habitDao.insertHabit(habit)
+    fun getHabitById(habitId: Long): Flow<Habit?> = habitDao.getHabitById(habitId)
+
+    suspend fun insertHabit(habit: Habit): Long {
+        return habitDao.insertHabit(habit)
     }
 
     suspend fun calculateBestStreak(habit: Habit): Int {

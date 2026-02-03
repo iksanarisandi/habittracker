@@ -1,7 +1,9 @@
 package com.habittracker.ui.home
 
+import android.content.Context
 import com.habittracker.data.HabitRepository
 import com.habittracker.data.local.entity.Habit
+import com.habittracker.worker.ReminderScheduler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -13,7 +15,8 @@ import java.time.LocalDate
 
 class HomePresenter(
     private var view: HomeContract.View?,
-    private val repository: HabitRepository
+    private val repository: HabitRepository,
+    private val context: Context? = null
 ) : HomeContract.Presenter {
 
     private val job = kotlinx.coroutines.SupervisorJob()
@@ -67,14 +70,21 @@ class HomePresenter(
                     }
                     return@launch
                 }
-                
+
                 val habit = Habit(
                     name = name,
                     frequency = frequency,
                     reminderTime = reminderTime,
                     isReminderEnabled = isReminderEnabled
                 )
-                repository.insertHabit(habit)
+                val habitId = repository.insertHabit(habit)
+
+                // Schedule reminder if enabled
+                if (isReminderEnabled && reminderTime != null && context != null) {
+                    val scheduledHabit = habit.copy(id = habitId)
+                    ReminderScheduler.scheduleReminderForHabit(context, scheduledHabit)
+                }
+
                 // Flow will auto-update the list
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
@@ -88,6 +98,11 @@ class HomePresenter(
         scope.launch(Dispatchers.IO) {
             try {
                 repository.updateHabit(habit)
+
+                // Update reminder schedule
+                if (context != null) {
+                    ReminderScheduler.scheduleReminderForHabit(context, habit)
+                }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     view?.showError("Failed to update habit")
@@ -100,6 +115,11 @@ class HomePresenter(
         scope.launch(Dispatchers.IO) {
             try {
                 repository.deleteHabit(habit)
+
+                // Cancel reminder
+                if (context != null) {
+                    ReminderScheduler.cancelReminderForHabit(context, habit.id)
+                }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     view?.showError("Failed to delete habit")

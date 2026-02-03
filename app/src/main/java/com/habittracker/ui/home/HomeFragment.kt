@@ -64,7 +64,7 @@ class HomeFragment : Fragment(), HomeContract.View {
     private fun setupDependencies() {
         val database = (requireActivity().application as HabitApplication).database
         val repository = HabitRepository(database.habitDao())
-        presenter = HomePresenter(this, repository)
+        presenter = HomePresenter(this, repository, requireContext())
     }
 
     private fun setupRecyclerView() {

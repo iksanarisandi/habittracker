@@ -7,7 +7,6 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.habittracker.data.local.HabitDatabase
 import com.habittracker.worker.DailyResetWorker
-import com.habittracker.worker.ReminderWorker
 import java.util.concurrent.TimeUnit
 import java.time.LocalDateTime
 import java.time.Duration
@@ -17,8 +16,9 @@ class HabitApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        setupWorker()
         setupDailyResetWorker()
+        // Note: Reminder scheduling is now handled when habits are added/updated
+        // See AddHabitBottomSheet and related presenters for reminder scheduling
     }
 
     private fun setupDailyResetWorker() {
@@ -34,24 +34,6 @@ class HabitApplication : Application() {
             "DailyResetWork",
             ExistingPeriodicWorkPolicy.UPDATE,
             resetWork
-        )
-    }
-
-    private fun setupWorker() {
-        val constraints = Constraints.Builder()
-            .setRequiresBatteryNotLow(true)
-            .build()
-
-        val reminderWork = PeriodicWorkRequestBuilder<ReminderWorker>(
-            1, TimeUnit.HOURS
-        )
-        .setConstraints(constraints)
-        .build()
-
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-            "HabitReminderWork",
-            ExistingPeriodicWorkPolicy.KEEP,
-            reminderWork
         )
     }
 }

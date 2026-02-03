@@ -11,13 +11,11 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.habittracker.HabitApplication
-import com.habittracker.R
 import com.habittracker.data.HabitRepository
 import com.habittracker.ui.home.MainActivity
 import kotlinx.coroutines.flow.first
 import java.time.LocalDate
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 
 class ReminderWorker(
     context: Context,
@@ -29,36 +27,35 @@ class ReminderWorker(
         HabitRepository(database.habitDao())
     }
 
+    // Get habit ID from input data
+    private val habitId: Long = workerParams.inputData.getLong("habitId", -1L)
+
     override suspend fun doWork(): Result {
-        val now = LocalTime.now()
+        if (habitId == -1L) {
+            return Result.failure()
+        }
+
         val today = LocalDate.now()
 
         try {
-            val habits = repository.allHabits.first()
-            
-            for (habit in habits) {
-                if (habit.isReminderEnabled && habit.reminderTime != null) {
-                    // Check if completed today
-                    val log = repository.getHabitLog(habit.id, today)
-                    if (log?.completed == true) continue
+            // Get specific habit
+            val habit = repository.getHabitById(habitId).first()
+                ?: return Result.failure()
 
-                    // Check time (Simple logic: if current hour matches reminder hour)
-                    // Format reminderTime "HH:mm"
-                    try {
-                        val reminderTime = LocalTime.parse(habit.reminderTime)
-                        
-                        val nowMinutes = now.hour * 60 + now.minute
-                        val reminderMinutes = reminderTime.hour * 60 + reminderTime.minute
-                        
-                        // Check if within 15 minutes (since worker interval might be 15 min minimum)
-                        if (kotlin.math.abs(nowMinutes - reminderMinutes) <= 15) {
-                            showNotification(habit.name, habit.id.toInt())
-                        }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-                }
+            // Check if reminder is enabled
+            if (!habit.isReminderEnabled || habit.reminderTime == null) {
+                return Result.success()
             }
+
+            // Check if already completed today
+            val log = repository.getHabitLog(habitId, today)
+            if (log?.completed == true) {
+                return Result.success()
+            }
+
+            // Show notification
+            showNotification(habit.name, habitId.toInt())
+
             return Result.success()
         } catch (e: Exception) {
             e.printStackTrace()
@@ -76,24 +73,27 @@ class ReminderWorker(
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
         val pendingIntent = PendingIntent.getActivity(
-            context, 0, intent, PendingIntent.FLAG_IMMUTABLE
+            context, notificationId, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
         val builder = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(android.R.drawable.ic_menu_info_details) // Use Android system icon
+            .setSmallIcon(android.R.drawable.ic_menu_info_details)
             .setContentTitle("Habit Reminder")
             .setContentText("Time to $habitName!")
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
+            .setOngoing(false)
 
         try {
             if (androidx.core.content.ContextCompat.checkSelfPermission(
-                context,
-                android.Manifest.permission.POST_NOTIFICATIONS
-            ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+                    context,
+                    android.Manifest.permission.POST_NOTIFICATIONS
+                ) == android.content.pm.PackageManager.PERMISSION_GRANTED
             ) {
-                NotificationManagerCompat.from(context).notify(notificationId, builder.build())
+                with(NotificationManagerCompat.from(context)) {
+                    notify(notificationId, builder.build())
+                }
             }
         } catch (e: SecurityException) {
             e.printStackTrace()
@@ -104,9 +104,11 @@ class ReminderWorker(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = "Habit Reminders"
             val descriptionText = "Reminders for your daily habits"
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val importance = NotificationManager.IMPORTANCE_HIGH
             val channel = NotificationChannel(channelId, name, importance).apply {
                 description = descriptionText
+                enableVibration(true)
+                enableLights(true)
             }
             val notificationManager: NotificationManager =
                 context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
