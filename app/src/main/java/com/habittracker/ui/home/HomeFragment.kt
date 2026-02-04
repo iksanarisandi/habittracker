@@ -99,19 +99,20 @@ class HomeFragment : Fragment(), HomeContract.View {
     }
 
     private fun showAddHabitDialog() {
-        val bottomSheet = AddHabitBottomSheet(null) { name, frequency, reminderTime, isReminderEnabled ->
-            presenter.addHabit(name, frequency, reminderTime, isReminderEnabled)
+        val bottomSheet = AddHabitBottomSheet(null) { name, frequency, reminderTime, isReminderEnabled, reminderDays ->
+            presenter.addHabit(name, frequency, reminderTime, isReminderEnabled, reminderDays)
         }
         bottomSheet.show(childFragmentManager, AddHabitBottomSheet.TAG)
     }
 
     private fun showEditHabitDialog(habit: com.habittracker.data.local.entity.Habit) {
-        val bottomSheet = AddHabitBottomSheet(habit) { name, frequency, reminderTime, isReminderEnabled ->
+        val bottomSheet = AddHabitBottomSheet(habit) { name, frequency, reminderTime, isReminderEnabled, reminderDays ->
             val updatedHabit = habit.copy(
                 name = name,
                 frequency = frequency,
                 reminderTime = reminderTime,
                 isReminderEnabled = isReminderEnabled,
+                reminderDays = reminderDays,
                 updatedAt = System.currentTimeMillis()
             )
             presenter.updateHabit(updatedHabit)

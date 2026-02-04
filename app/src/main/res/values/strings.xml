@@ -12,4 +12,12 @@
     <string name="delete">Delete</string>
     <string name="delete_confirmation">Are you sure you want to delete this habit?</string>
     <string name="streak_fmt">Streak: %d</string>
+    <string name="remind_on_days">Remind on these days:</string>
+    <string name="monday">Mon</string>
+    <string name="tuesday">Tue</string>
+    <string name="wednesday">Wed</string>
+    <string name="thursday">Thu</string>
+    <string name="friday">Fri</string>
+    <string name="saturday">Sat</string>
+    <string name="sunday">Sun</string>
 </resources>

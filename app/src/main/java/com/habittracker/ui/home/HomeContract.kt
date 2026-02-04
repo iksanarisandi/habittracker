@@ -20,7 +20,7 @@ interface HomeContract {
 
     interface Presenter {
         fun loadHabits()
-        fun addHabit(name: String, frequency: String, reminderTime: String?, isReminderEnabled: Boolean)
+        fun addHabit(name: String, frequency: String, reminderTime: String?, isReminderEnabled: Boolean, reminderDays: String?)
         fun updateHabit(habit: Habit)
         fun deleteHabit(habit: Habit)
         fun toggleHabit(habit: Habit, isCompleted: Boolean)

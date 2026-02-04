@@ -58,7 +58,7 @@ class HomePresenter(
         }
     }
 
-    override fun addHabit(name: String, frequency: String, reminderTime: String?, isReminderEnabled: Boolean) {
+    override fun addHabit(name: String, frequency: String, reminderTime: String?, isReminderEnabled: Boolean, reminderDays: String?) {
         if (name.isBlank()) return
         scope.launch(Dispatchers.IO) {
             try {
@@ -75,7 +75,8 @@ class HomePresenter(
                     name = name,
                     frequency = frequency,
                     reminderTime = reminderTime,
-                    isReminderEnabled = isReminderEnabled
+                    isReminderEnabled = isReminderEnabled,
+                    reminderDays = reminderDays
                 )
                 val habitId = repository.insertHabit(habit)
 

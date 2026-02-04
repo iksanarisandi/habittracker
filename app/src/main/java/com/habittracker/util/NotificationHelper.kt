@@ -30,21 +30,26 @@ object NotificationHelper {
         }
     }
 
-    fun showNotification(context: Context, habitName: String, notificationId: Int) {
+    fun showNotification(context: Context, habitName: String, frequency: String, notificationId: Int) {
         createNotificationChannel(context)
 
         val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
         val pendingIntent = PendingIntent.getActivity(
-            context, notificationId, intent, 
+            context, notificationId, intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
+
+        val contentText = when (frequency) {
+            "WEEKLY" -> "Time for your weekly habit: $habitName!"
+            else -> "Time to $habitName!"
+        }
 
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.ic_menu_info_details)
             .setContentTitle("Habit Reminder")
-            .setContentText("Time to $habitName!")
+            .setContentText(contentText)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)

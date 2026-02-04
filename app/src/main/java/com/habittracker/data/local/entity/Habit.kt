@@ -12,6 +12,7 @@ data class Habit(
     val frequency: String = "DAILY", // DAILY or WEEKLY
     val reminderTime: String? = null, // HH:mm
     val isReminderEnabled: Boolean = true,
+    val reminderDays: String? = null, // Comma-separated days for weekly: "MONDAY,WEDNESDAY"
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis()
 )
