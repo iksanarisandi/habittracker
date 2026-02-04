@@ -5,6 +5,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.habittracker.HabitApplication
 import com.habittracker.data.HabitRepository
+import com.habittracker.data.local.entity.HabitLog
 import kotlinx.coroutines.flow.first
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -12,11 +13,15 @@ import java.time.LocalDate
 class ReminderWorker(
     context: Context,
     workerParams: WorkerParameters
-) : CoroutineWorker(applicationContext, workerParams) {
+) : CoroutineWorker(context, workerParams) {
 
     private val repository: HabitRepository by lazy {
         val database = (applicationContext as HabitApplication).database
         HabitRepository(database.habitDao())
+    }
+
+    private val habitDao by lazy {
+        (applicationContext as HabitApplication).database.habitDao()
     }
 
     // Get habit ID from input data
@@ -58,7 +63,7 @@ class ReminderWorker(
                 val currentWeek = today.get(weekFields.weekOfWeekBasedYear())
                 val currentYear = today.year
 
-                val logs = repository.getHabitLogs(habitId)
+                val logs: List<HabitLog> = habitDao.getHabitLogs(habitId)
                 val alreadyCompletedThisWeek = logs.any { log ->
                     val logDate = LocalDate.parse(log.date)
                     val logWeek = logDate.get(weekFields.weekOfWeekBasedYear())

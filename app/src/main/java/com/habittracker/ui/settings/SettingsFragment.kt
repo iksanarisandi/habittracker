@@ -19,7 +19,7 @@ class SettingsFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_settings, container, false)
         
         view.findViewById<Button>(R.id.btn_test_reminder).setOnClickListener {
-            NotificationHelper.showNotification(requireContext(), "Test Habit", 999)
+            NotificationHelper.showNotification(requireContext(), "Test Habit", "DAILY", 999)
             Toast.makeText(requireContext(), "Sent test notification", Toast.LENGTH_SHORT).show()
         }
         
